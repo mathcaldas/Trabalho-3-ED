@@ -24,4 +24,5 @@ void exq_free(ExamQueue *q);
 // Print the patient IDs in the exam queue
 void exq_print(ExamQueue *q);
 
+
 #endif

@@ -3,6 +3,7 @@
 #include "exam.h"
 #include "patient.h"
 #include "report.h"
+#include "log.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -29,6 +30,9 @@ int main() {
 
     Awaitable **device = create_awaitables(DEVICE_SIZE);
     Awaitable **radiologist = create_awaitables(RADIOLOGIST_SIZE);
+
+    // Initialize
+    Log *log = create_log();
     
     // Variables for metrics
     int acc_cont_patient_exams, acc_pathology_time;
@@ -188,6 +192,7 @@ int main() {
     ll_patient_free(lpl);
     exq_free(q_exam);
     req_free(q_report);
+    log_free(log);
     
     return 0;
 }
