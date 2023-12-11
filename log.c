@@ -48,9 +48,11 @@ void save_log_to_file(const Log *log, const char *filename){
     FILE *patients_inf;
     patients_inf = fopen(filename, "w");
 
-    for (int i=0; i < log->count; i++)
-        fprintf(patients_inf,"Action: %s\n", log->events[i]->message);
-
+    for (int i=0; i < log->count; i++) {
+        char *formatted_time = ctime(&log->events[i]->timestamp);
+        formatted_time[strcspn(formatted_time, "\n")] = '\0';
+        fprintf(patients_inf,"%s | %s\n", formatted_time, log->events[i]->message);
+    }
     fclose(patients_inf);
 }
 
