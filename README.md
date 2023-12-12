@@ -49,5 +49,19 @@
   * Função para gerar um inteiro aleatório num dado intervalo
     * Utilizado nas funçoes de gerar CPF, Nome e Idade
   * Função para retornar tempo de espera na fila para o laudo
+    
+### Log :clipboard:
+  
+
+  * Função utilizada para gerar um arquivo txt
+  * Contem:
+    * Registro de pacientes
+    * Entrada e saída de paciente para Exames
+    * Entrada e saída de paciente para Laudos
+    * Atributos gerais
+      * Nome, Idade, CPF, Patologia, etc
+    * Métricas gerais
+  * Decisão de implementação:
+    * Aplicação de uma lista dinâmica para registro de eventos    
 
 ##
