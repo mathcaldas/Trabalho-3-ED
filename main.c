@@ -93,7 +93,7 @@ int main() {
                 cont_pathology_exams[condition]++;
                 int duration = use_awaitable(radiologist[j], patient_id, RADIOLOGIST_LOWER_LIMIT, RADIOLOGIST_UPPER_LIMIT);
 
-                sprintf(msg, "ID: %5d | Patient went to radiologist (Elapsed report queue time: %d; Radiologist duration: %d)", patient_id, queue_time, duration);
+                sprintf(msg, "ID: %5d | Patient went to radiologist (Elapsed report queue time: %d; Patient Condition: %s; Radiologist duration: %d)", patient_id, queue_time, get_condition_name(condition), duration);
                 log_event(log, msg);
             }
             else if (!is_awaitable_available(radiologist[j]) && awaitable_duration_decrease(radiologist[j]) == 0) {
@@ -159,7 +159,7 @@ int main() {
                 cont_pathology_exams[condition]++;
                 int duration = use_awaitable(radiologist[j], patient_id, RADIOLOGIST_LOWER_LIMIT, RADIOLOGIST_UPPER_LIMIT);
 
-                sprintf(msg, "ID: %5d | Patient went to radiologist after time limit (Elapsed report queue time: %d; Radiologist duration: %d)", patient_id, queue_time, duration);
+                sprintf(msg, "ID: %5d | Patient went to radiologist after time limit (Elapsed report queue time: %d; Patient Condition: %s; Radiologist duration: %d)", patient_id, queue_time, get_condition_name(condition), duration);
                 log_event(log, msg);
                                                                     
             }
