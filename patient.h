@@ -26,4 +26,6 @@ void ll_patient_free(LinkedPatientList *l);
 //Get the ID of Patient and return for main
 int get_patient_id(Patient *p);
 
+void ll_get_patient_attributes(LinkedPatientList *l, int patient_id, char *name, char *cpf, int *age);
+
 #endif

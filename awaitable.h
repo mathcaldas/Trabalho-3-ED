@@ -10,7 +10,7 @@ Awaitable **create_awaitables(int qtd);
 void initialize_awaitable(Awaitable *a);
 
 // Function to use an awaitable task with a given patient ID and time range
-void use_awaitable(Awaitable *a, int patient_id, int mininum, int maximum);
+int use_awaitable(Awaitable *a, int patient_id, int mininum, int maximum);
 
 // Check if an awaitable task is available
 int is_awaitable_available(Awaitable *a);

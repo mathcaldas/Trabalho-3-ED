@@ -35,7 +35,7 @@ int main() {
     Log *log = create_log();
     
     // Declare msg for log
-    char msg[80];
+    char msg[150];
 
     // Variables for metrics
     int acc_cont_patient_exams, acc_pathology_time;
@@ -50,8 +50,12 @@ int main() {
         if (gen_randint(0, 100) <= 20){
             Patient *p = generate_patient();
             ll_patient_insert(lpl, p);
+            
+            char patient_name[50], patient_cpf[12];
+            int age, id = get_patient_id(p);
+            ll_get_patient_attributes(lpl, id, patient_name, patient_cpf, &age);
             int patient_id = get_patient_id(p);
-            sprintf(msg, "ID: %5d | Patient Created", patient_id);
+            sprintf(msg, "ID: %5d | Patient Created (CPF: %s; Name: %s; Age: %d)", patient_id, patient_cpf, patient_name, age);
             log_event(log, msg);
             exq_enqueue(q_exam, patient_id);
         }
@@ -61,9 +65,9 @@ int main() {
             if (!exq_is_empty(q_exam) && is_awaitable_available(device[j])) {
                 // Dequeue a patient from the exam queue and use the device
                 int patient_id = exq_dequeue(q_exam);
-                sprintf(msg, "ID: %5d | Patient is using device", patient_id);
+                int duration = use_awaitable(device[j], patient_id, DEVICE_LOWER_LIMIT, DEVICE_UPPER_LIMIT);
+                sprintf(msg, "ID: %5d | Patient is using device (Device duration: %d)", patient_id, duration);
                 log_event(log, msg);
-                use_awaitable(device[j], patient_id, DEVICE_LOWER_LIMIT, DEVICE_UPPER_LIMIT);
             }
             else if (!is_awaitable_available(device[j]) && awaitable_duration_decrease(device[j]) == 0) {
                 // If the device is no longer busy, enqueue the patient for report
@@ -85,12 +89,12 @@ int main() {
                 free(exam);
                 int queue_time = get_qtime_to_exam(i, initialization);
 
-                sprintf(msg, "ID: %5d | Patient went to radiologist", patient_id);
-                log_event(log, msg);
-
                 pathology_exams_time[condition] += queue_time;
                 cont_pathology_exams[condition]++;
-                use_awaitable(radiologist[j], patient_id, RADIOLOGIST_LOWER_LIMIT, RADIOLOGIST_UPPER_LIMIT);
+                int duration = use_awaitable(radiologist[j], patient_id, RADIOLOGIST_LOWER_LIMIT, RADIOLOGIST_UPPER_LIMIT);
+
+                sprintf(msg, "ID: %5d | Patient went to radiologist (Elapsed report queue time: %d; Radiologist duration: %d)", patient_id, queue_time, duration);
+                log_event(log, msg);
             }
             else if (!is_awaitable_available(radiologist[j]) && awaitable_duration_decrease(radiologist[j]) == 0) {
                 int patient_id = get_awaitable_id(radiologist[j]);
@@ -126,9 +130,10 @@ int main() {
             if (!exq_is_empty(q_exam) && is_awaitable_available(device[j])) {
                 // Dequeue a patient from the exam queue and use the device
                 int patient_id = exq_dequeue(q_exam);
-                sprintf(msg, "ID: %5d | Patient is using device after time limit", patient_id);
                 log_event(log, msg);
-                use_awaitable(device[j], patient_id, DEVICE_LOWER_LIMIT, DEVICE_UPPER_LIMIT);
+                int duration = use_awaitable(device[j], patient_id, DEVICE_LOWER_LIMIT, DEVICE_UPPER_LIMIT);
+
+                sprintf(msg, "ID: %5d | Patient is using device after time limit (Device duration: %d)", patient_id, duration);
             }
             else if (!is_awaitable_available(device[j]) && awaitable_duration_decrease(device[j]) == 0) {
                 // If the device is no longer busy, enqueue the patient for report
@@ -149,14 +154,14 @@ int main() {
                 req_get_exam_attributes(exam, &patient_id, &initialization, &condition);
                 free(exam);
                 int queue_time = get_qtime_to_exam(i, initialization);
-                
-                sprintf(msg, "ID: %5d | Patient went to radiologist after time limit", patient_id);
-                log_event(log, msg);
 
                 pathology_exams_time[condition] += queue_time;
                 cont_pathology_exams[condition]++;
-                use_awaitable(radiologist[j], patient_id, RADIOLOGIST_LOWER_LIMIT, RADIOLOGIST_UPPER_LIMIT);
-                
+                int duration = use_awaitable(radiologist[j], patient_id, RADIOLOGIST_LOWER_LIMIT, RADIOLOGIST_UPPER_LIMIT);
+
+                sprintf(msg, "ID: %5d | Patient went to radiologist after time limit (Elapsed report queue time: %d; Radiologist duration: %d)", patient_id, queue_time, duration);
+                log_event(log, msg);
+                                                                    
             }
             else if (!is_awaitable_available(radiologist[j]) && awaitable_duration_decrease(radiologist[j]) == 0) {
                 int patient_id = get_awaitable_id(radiologist[j]);
@@ -204,8 +209,7 @@ int main() {
     printf("\nQUANTIDADE DE PACIENTES NA LISTA: %d\n", ll_patient_size(lpl));
 
     // Create log file
-    save_log_to_file(log, "log.txt");
-
+    save_log_to_file(log, "log.txt", exam_time_result, avg_pathology_time, passed_limit_time, ll_patient_size(lpl));
 
     // Free allocated memory of queues, lists, and awaitables
     awaitable_free(device, DEVICE_SIZE);

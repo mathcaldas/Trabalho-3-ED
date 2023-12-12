@@ -104,3 +104,17 @@ void ll_patient_free(LinkedPatientList *l)
 int get_patient_id(Patient *p) {
    return p->id;
 }
+
+void ll_get_patient_attributes(LinkedPatientList *l, int patient_id, char *name, char *cpf, int *age) {
+   ListPatientNode *p = l->first;
+   while (p != NULL && p->info->id != patient_id) {
+      p = p->next;
+   }
+
+   if (p == NULL)
+      return;
+
+   strcpy(name, p->info->name);
+   strcpy(cpf, p->info->cpf);
+   *age = p->info->age;
+}

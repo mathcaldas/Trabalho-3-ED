@@ -23,9 +23,10 @@ Awaitable **create_awaitables(int qtd) {
 }
 
 // Set parameters for an awaitable task
-void use_awaitable(Awaitable *a, int patient_id, int mininum, int maximum) {
+int use_awaitable(Awaitable *a, int patient_id, int mininum, int maximum) {
     a->patient_id = patient_id;
     a->duration = gen_randint(mininum, maximum);
+    return a->duration;
 }
 
 // Check if an awaitable task is available
